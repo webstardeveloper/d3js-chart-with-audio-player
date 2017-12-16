@@ -139,7 +139,30 @@ function drawArea(indicator, data, key, audio=null){
 		.attr('height', 10)
 		.attr('width', 0);
 		
+	var focus1 = g.append('g').style('display', 'block').attr("stroke", "green");
+	var tooltip = d3.select("body").append("div").attr("class", "toolTip");
 	
+	focus1.append('line')
+		.attr('id', 'focusLineX1'+key)
+		.attr('class', 'focusLine')
+		.attr('height', 10)
+		.attr('width', 0);
+		
+	focus1.append('circle')
+		.attr('id', 'focusCircle'+key)
+		.attr('class', 'focusCircle')
+		.attr('r', 5)
+		.attr('class', 'circle focusCircle');
+		
+	
+		
+	focus.select('#focusLineX'+key)
+				.attr('x1', 0).attr('y1', 0)
+				.attr('x2', 0).attr('y2', 100);
+		
+	focus1.select('#focusLineX1'+key)
+				.attr('x1', 0).attr('y1', 0)
+				.attr('x2', 0).attr('y2', 100);
 
 	/*svg.append('rect')
 		.attr('class', 'bg-rect')
