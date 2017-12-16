@@ -154,7 +154,51 @@ function drawArea(indicator, data, key, audio=null){
 		.attr('r', 5)
 		.attr('class', 'circle focusCircle');
 		
-	
+	g.append('rect')
+		.attr('class', 'overlay'+key)
+		.attr('width', width)
+		.attr('height', height)
+		.style('opacity', 0)
+		.on('mousemove', function() { 
+			focus1.style('display', 'block');
+			var mouse = d3.mouse(this);
+			
+			var x = Math.round(xDomain.invert(mouse[0]));
+			var y =0
+			
+			count = Math.round(dict_data[x] * 100)
+			
+			focus1.select('#focusCircle'+key)
+                        .attr('cx', xScale(x))
+                        .attr('cy', yScale(count/100.0));
+						
+			focus1.select('#focusLineX1'+key)
+				.attr('x1', xScale(x)).attr('y1', 0)
+				.attr('x2', xScale(x)).attr('y2', 100);
+				
+			if(count.toString() == "NaN") count = 0
+			tooltip
+              .style("left", d3.event.pageX - 20 + "px")
+              .style("top", d3.event.pageY + 20 + "px")
+              .style("display", "inline-block")
+			  .html(count.toString() + "% of users still at " + x.toString() + " seconds of the song");
+				
+		})
+		.on("mouseout", function(d, i) { 
+			tooltip.style("display", "none");
+		})
+		.on('click', function() { 
+			var mouse = d3.mouse(this);
+			var x = Math.round(xDomain.invert(mouse[0]));
+			var y = 0
+			
+			focus.select('#focusLineX'+key)
+				.attr('x1', xScale(x)).attr('y1', 0)
+				.attr('x2', xScale(x)).attr('y2', 100);
+				
+			progress.attr('width', xScale(x))
+				
+		});
 		
 	focus.select('#focusLineX'+key)
 				.attr('x1', 0).attr('y1', 0)
