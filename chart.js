@@ -85,3 +85,23 @@ var data = [
   {letter: 6, frequency: .02288},
 ];
 
+function processData(allText) {
+
+	var record_num = 3; // or however many elements there are in each row
+	var allTextLines = allText.split(/\r\n|\n/);
+	
+	res = {}
+	for(i=1; i<allTextLines.length; i++){
+		if(allTextLines == "") continue;
+		tokens = allTextLines[i].split('\t')
+		
+		if(res[tokens[1]] == undefined)
+			res[tokens[1]] = []
+		x = parseInt(tokens[0])
+		y = parseFloat(tokens[2])
+		if(isNaN(x)) x = 0
+		if(isNaN(y)) y = 0
+		res[tokens[1]].push({"time": x, "count": y})
+	}
+	return res
+}
