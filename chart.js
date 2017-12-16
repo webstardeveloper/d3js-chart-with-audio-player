@@ -70,7 +70,44 @@ function drawArea(indicator, data, key, audio=null){
 
 	area.y0(yScale(0));
 
+	// set the gradient
+	svg.append("linearGradient")				
+		.attr("id", "area-gradient")			
+		.attr("gradientUnits", "userSpaceOnUse")	
+		.attr("x1", 0).attr("y1", yScale(0))			
+		.attr("x2", 0).attr("y2", -10)
+		.selectAll("stop")						
+		.data([								
+		  {offset: "0%", color: "#ff6000"},		
+		  {offset: "100%", color: "#ffd134"}	
+		])					
+		.enter().append("stop")			
+		.attr("offset", function(d) { return d.offset; })	
+		.attr("stop-color", function(d) { return d.color; })
+
 	
+
+	/*svg.append('rect')
+		.attr('class', 'bg-rect')
+		.attr('x', 49)
+		.attr('y', 120)
+		.attr('fill', 'white')
+		.attr('height', 15)
+		.attr('width', function(){
+			return segmentWidth * states.length;
+		});*/
+
+
+	/*progress.transition()
+		.duration(10000)
+		.attr('width', function(){
+			var index = states.indexOf(currentState);
+			return (index + 1) * segmentWidth;
+		});*/
+		
+	// moveProgressBar(progress, focus.select('#focusLineX'+key), xScale(100), 3000)
+	//moveProgressBar(progress, focus.select('#focusLineX'+key), xScale(200), 3000)
+	//moveProgressBar(progress, focus.select('#focusLineX'+key), xScale(300), 3000)
 	
 	return [progress, focus.select('#focusLineX'+key), xScale, xDomain]
 }
