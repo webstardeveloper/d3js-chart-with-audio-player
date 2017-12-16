@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="style.css">
+</head>	
+<body>
+	<div>
+		<input type="file" id="fileInput">
+		<pre id="fileDisplayArea"></pre>
+	</div>
+
+	<div id="container">
+
+	</div>
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="chart.js"></script>
+<script src="player.js"></script>
+<script>
+
+var audios = {}
+
+function play(key, obj){
+	if(obj.getAttribute("src") == 'images/play-button.png'){
+		obj.setAttribute("src", "images/pause-round-button.png")
+		audios[key][4].play()
+		
+		// audios[key][3].currentTime = 0
+		
+		if(audios[key][3].invert(audios[key][1].attr('x1')) >= audios[key][4].duration)
+		{
+			audios[key][4].currentTime = 0
+			audios[key][0].attr('width', 0)
+			audios[key][1].attr('x1', 0).attr('x2', 0)
+		}else{
+			console.log(audios[key][3].invert(audios[key][1].attr('x1')))
+			audios[key][4].currentTime = audios[key][3].invert(audios[key][1].attr('x1'))
+		}
+		
+		var remain = audios[key][4].duration - audios[key][4].currentTime
+		
+		if(remain > 0){
+			moveProgressBar(audios[key][0], audios[key][1], audios[key][2](audios[key][4].duration), remain * 1000)
+		} else {
+			moveProgressBar(audios[key][0], audios[key][1], audios[key][2](audios[key][4].duration), audios[key][4].duration * 1000)
+		}
+		
+	} else {
+		obj.setAttribute("src", "images/play-button.png")
+		audios[key][0].transition()
+		audios[key][1].transition()
+		audios[key][4].pause()
+	}
+}
+
+// read data from file
+window.onload = function() {
+	var fileInput = document.getElementById('fileInput');
+	var fileDisplayArea = document.getElementById('fileDisplayArea');
+
+	fileInput.addEventListener('change', function(e) {
+		var file = fileInput.files[0];
+		var textType = /csv.*/;
+
+		var reader = new FileReader();
+
+		reader.onload = function(e) {
+			data = processData(reader.result)
+			
+			index = 0
+			for (var key in data){
+				if(key == 'undefined' || key == '712656a0b0194c9e9e6c3db7562a6391') continue;
+					document.getElementById('container').innerHTML += '<div class="audio" style="margin: 50px 30px" id="'+key+'"> \
+										<img src="images/play-button.png" class="play-icon" onclick="play(\''+key+'\', this)"/> \
+										<h3 style="margin-right: 20px;">' + key + '</h3> \
+										<svg class="chart-' + key + '" width="960" height="150"></svg> \
+									</div>';	
+				
+			}
+			
+			for (var key in data){
+			    try{
+				    audio = get_player_object('audios/' + key + '.mp3')
+				    audio.key = key
+					audio.onloadeddata = function() {
+						key = this.key
+						res = drawArea('.chart-' + key, data[key], key, this)
+						if(res != null){
+							audios[key] = res
+							audios[key].push(this)
+						}
+					}; 
+				}catch(err) {
+				
+					var child = document.getElementById(key);
+					child.parentNode.removeChild(child);
+
+				}
+			}
+			
+			console.log(audios)
+		}
+		reader.readAsText(file);
+	});
+}
+
+
+</script>
+</body>
