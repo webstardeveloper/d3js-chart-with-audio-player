@@ -85,6 +85,60 @@ function drawArea(indicator, data, key, audio=null){
 		.attr("offset", function(d) { return d.offset; })	
 		.attr("stop-color", function(d) { return d.color; })
 
+	g.append("g")
+		.attr("transform", "translate(0," + (height + 10).toString() + ")")
+		.call(d3.axisBottom(xScale).tickFormat(function(d,i){ return format(d) }))
+		
+
+	g.append("g")
+		.call(d3.axisLeft(yScale).ticks(4).tickSize(-width).tickFormat(d3.format(",.0%")))
+		.append("text")
+		.attr("fill", "#000")
+		.attr("transform", "rotate(-90)")
+		.attr("y", 6)
+		.attr("dy", "0.71em")
+		.attr("text-anchor", "end")
+		.text("");
+	  
+	g.append("path")
+		.datum(data)
+		.attr("class", "area")
+		.attr("d", area)
+	  
+	g.append("path")
+		.datum(data)
+		.attr("class", "line")
+		.attr("fill", "none")
+		.attr("stroke-linejoin", "round")
+		.attr("stroke-linecap", "round")
+		.attr("stroke-width", 1.5)
+		.attr("stroke", "#ffd16f")
+		.attr("d", valueline)
+
+	g.append("path")
+		.data([{'x': 0, 'value': 0.05}, {'x': 6, 'value': 0.05}])
+		.enter().append("rect")
+		.attr("class", "bar")
+		.attr("d", valueline)
+	  
+	var progress = svg.append('rect')
+		.attr('class', 'progress-rect')
+		.attr('fill', function(){
+			return 'gray';
+		})
+		.attr('height', 10)
+		.attr('width', 0)
+		.attr('x', 49)
+		.attr('y', 120);
+		
+	var focus = g.append('g').style('display', 'block').attr("stroke", "red");
+	
+	focus.append('line')
+		.attr('id', 'focusLineX'+key)
+		.attr('class', 'focusLine')
+		.attr('height', 10)
+		.attr('width', 0);
+		
 	
 
 	/*svg.append('rect')
